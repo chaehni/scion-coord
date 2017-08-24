@@ -41,7 +41,7 @@ type Account struct {
 	Organisation string
 	AccountId    string
 	Secret       string
-	Users        []*user `orm:"reverse(many);index"`
+	Users        []*User `orm:"reverse(many);index"`
 	ASes         []*As   `orm:"reverse(many);index"`
 	Created      time.Time
 	Updated      time.Time
@@ -82,7 +82,7 @@ func derivePassword(password string, salt []byte) ([]byte, error) {
 }
 
 // This function creates both a new user and a new account and associate them
-func RegisterUser(accountName, organisation, email, password, first, last string) (*user, error) {
+func RegisterUser(accountName, organisation, email, password, first, last string) (*User, error) {
 
 	// find whether the user email is already taken
 	storedUser, err := FindUserByEmail(email)
@@ -139,7 +139,7 @@ func RegisterUser(accountName, organisation, email, password, first, last string
 		}
 
 		// create user
-		u := new(user)
+		u := new(User)
 		u.Email = email
 		u.FirstName = first
 		u.LastName = last
@@ -150,7 +150,7 @@ func RegisterUser(accountName, organisation, email, password, first, last string
 		u.Created = time.Now().UTC()
 		u.Updated = time.Now().UTC()
 		//u.LastLoginAttempt = time.Now().UTC()
-		// assign user
+		// assign User
 		u.Account = a
 		u.Created = time.Now().UTC()
 
@@ -181,8 +181,8 @@ func FindAccountByName(name string) (*Account, error) {
 	return a, err
 }
 
-func FindUserByEmail(email string) (*user, error) {
-	u := new(user)
+func FindUserByEmail(email string) (*User, error) {
+	u := new(User)
 	err := o.QueryTable(u).Filter("Email", email).RelatedSel().One(u)
 	return u, err
 }
@@ -193,8 +193,8 @@ func FindUserByVerificationUUID(link string) (*user, error) {
 	return u, err
 }
 
-func FindUserById(id string) (*user, error) {
-	u := new(user)
+func FindUserById(id string) (*User, error) {
+	u := new(User)
 	err := o.QueryTable(u).Filter("Id", id).RelatedSel().One(u)
 	return u, err
 }
@@ -211,23 +211,24 @@ func FindAccountByAccountId(acc_id string) (*Account, error) {
 	return u, err
 }
 
-func (u *user) Delete() error {
+func (u *User) Delete() error {
 	_, err := o.Delete(u)
 	return err
 }
 
+// Deletes all associated Users
 func (a *Account) Delete() error {
 	_, err := o.Delete(a)
 	return err
 }
 
-func (u *user) Authenticate(password string) error {
+func (u *User) Authenticate(password string) error {
 
 	// if u.Locked {
 	// 	return errors.New("User locked.")
 	// }
 
-	// the user did less than N login attempts
+	// the User did less than N login attempts
 	//if u.FailedAttempts <= MAX_LOGIN_ATTEMPTS {
 	if err := u.checkPassword(password); err != nil {
 		return err
@@ -240,7 +241,7 @@ func (u *user) Authenticate(password string) error {
 	return nil
 	//}
 
-	// this means the user tried to log in more than 15 minutes ago
+	// this means the User tried to log in more than 15 minutes ago
 	// if validLockDownWindow(u.LastLoginAttempt) {
 	// 	return u.checkPassword(password)
 	// }
@@ -248,7 +249,7 @@ func (u *user) Authenticate(password string) error {
 	// return errors.New("Too many login attempts. Account locked.")
 }
 
-func (u *user) checkPassword(password string) error {
+func (u *User) checkPassword(password string) error {
 	// update time of attempts
 	// if err := u.UpdateLastLoginAttempt(); err != nil {
 	// 	return err
@@ -259,7 +260,7 @@ func (u *user) checkPassword(password string) error {
 		// if err := u.ResetFailedAttempts(); err != nil {
 		// 	return err
 		// }
-		return nil // means the user is successfully authenticated !
+		return nil // means the User is successfully authenticated !
 	}
 
 	// // update amount of attempts
