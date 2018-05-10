@@ -177,7 +177,7 @@ func main() {
 	router.Handle("/api/userPageData", apiChain.ThenFunc(loginController.UserInformation))
 
 	// email validation
-	router.Handle("/api/verifyEmail/{uuid}", loggingChain.ThenFunc(
+	router.Handle("/api/verifyEmail", loggingChain.ThenFunc(
 		registrationController.VerifyEmail))
 
 	// set password after pre-approved registration or password reset

@@ -3,8 +3,12 @@ scionApp
         function ($scope, loginService, $location, $window) {
 
             $scope.isActive = function (viewLocation) {
-                var active = (viewLocation === $location.path());
-                return active;
+                //return viewLocation === $location.path();
+                //return $location.path().startsWith(viewLocation);
+                expr = viewLocation.replace('/', '^\/').replace('*', '[a-z0-9-]+');
+                res = RegExp(expr).test($location.path());
+                alert (expr + '\n' + $location.path() + '\n' + res);
+                return res;
             };
 
             $scope.logout = function () {

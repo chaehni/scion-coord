@@ -26,12 +26,14 @@
   <script src="/public/js/controllers/admin.js"></script>
   <script src="/public/js/controllers/header.js"></script>
   <script src="/public/js/controllers/resend.js"></script>
+  <script src="/public/js/controllers/verification.js"></script>
   <script src="/public/js/services/register.js"></script>
   <script src="/public/js/services/password.js"></script>
   <script src="/public/js/services/login.js"></script>
   <script src="/public/js/services/user.js"></script>
   <script src="/public/js/services/admin.js"></script>
   <script src="/public/js/services/resend.js"></script>
+  <script src="/public/js/services/verification.js"></script>
   <script src="/public/js/angular-recaptcha.min.js"></script>
   <script src="/public/js/lightbox-plus-jquery.min.js"></script>
 </head>
@@ -42,9 +44,12 @@
   <div class="header clearfix" ng-controller="headerCtrl">
     <nav>
       <ul class="nav nav-pills pull-right">
-        <li role="presentation" ng-if="isActive('/login') || isActive('/register')"
+
+        <li role="presentation" ng-if="isActive('/login') || isActive('/register') || isActive('/verifyEmail/*/*') ||
+            isActive('/resend') || isActive('/setPassword/')"
             ng-class="{ active: isActive('/login') }"><a href="#/login">Login</a></li>
-        <li role="presentation" ng-if="isActive('/login') || isActive('/register')"
+        <li role="presentation" ng-if="isActive('/login') || isActive('/register') || isActive('/verifyEmail/*') ||
+            isActive('/resend') || isActive('/setPassword/')"
             ng-class="{ active: isActive('/register') }"><a href="#/register">Register</a></li>
         <li role="presentation" ng-if="user.IsAdmin && (isActive('/user') || isActive('/admin'))"
             ng-class="{ active: isActive('/admin') }"><a href="#/admin">Admin</a></li>

@@ -17,12 +17,10 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"strings"
 
-	"github.com/gorilla/mux"
 	"github.com/haisum/recaptcha"
 	"github.com/netsec-ethz/scion-coord/config"
 	"github.com/netsec-ethz/scion-coord/controllers"
@@ -49,6 +47,11 @@ type passwordRequest struct {
 	UUID                 string `json:"uuid"`
 	Password             string `json:"password"`
 	PasswordConfirmation string `json:"password_confirmation"`
+}
+
+type verificationResponse struct {
+	FirstName string `json:"firstname"`
+	LastName  string `json:"lastname"`
 }
 
 // check if the password match and that the length is at least 8 chars
@@ -186,8 +189,8 @@ func (c *RegistrationController) SetPassword(w http.ResponseWriter, r *http.Requ
 // Method used to validate email address
 func (c *RegistrationController) VerifyEmail(w http.ResponseWriter, r *http.Request) {
 
-	//retrieve submitted uuid
-	uuid := mux.Vars(r)["uuid"]
+	// retrieve submitted uuid
+	uuid := r.PostFormValue("uuid")
 
 	//validate link
 	u, err := models.FindUserByVerificationUUID(uuid)
@@ -210,15 +213,12 @@ func (c *RegistrationController) VerifyEmail(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	// TODO (mlegner): Make verification page consistent with the rest of the website
-	// load validation page
-	t, err := template.ParseFiles("templates/layout.html", "templates/verified.html")
-	if err != nil {
-		log.Printf("Error parsing HTML files: %v", err)
-		c.Error500(w, err, "Error parsing HTML files")
-		return
+	data := verificationResponse{
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
 	}
-	c.Render(t, u, w, r)
+
+	c.JSON(&data, w, r)
 
 }
 
