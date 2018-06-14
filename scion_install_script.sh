@@ -159,6 +159,11 @@ cd scion-viz/python/web
 pip3 install --user --require-hashes -r requirements.txt
 python3 ./manage.py migrate
 
+cd "$GOPATH/src/github.com/"
+git clone git@github.com:perrig/scionlab
+cd scionlab/vendor/
+govendor sync
+
 # Should we add aliases
 if [[ (! -z ${aliases_file} ) ]]
 then
